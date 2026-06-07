@@ -4,6 +4,7 @@ using AppEmermedica.Application.Usuarios.Queries;
 using AppEmermedica.Application.Usuarios.Requests;
 using AppEmermedica.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ namespace AppEmermedica.Controllers
         }
 
 
+        [Authorize(Roles = "Admin,User")]
         [HttpGet]
         public async Task<IActionResult> GetUsuariosByName([FromQuery] GetUsuarioByNameRequest request)
         {
@@ -39,6 +41,7 @@ namespace AppEmermedica.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUsuarioRequest request)
         {
