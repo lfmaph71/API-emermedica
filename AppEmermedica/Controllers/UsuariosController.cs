@@ -31,19 +31,11 @@ namespace AppEmermedica.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            try
-            {
-                var usuario = await _mediator.Send(new GetUsuarioByNameQuery(request.Nombre));
-                if (usuario == null)
-                    return NotFound("No se encontraron usuarios con ese nombre.");
+            var usuario = await _mediator.Send(new GetUsuarioByNameQuery(request.Nombre));
+            if (usuario == null)
+                return NotFound("No se encontraron usuarios con ese nombre.");
 
-                return Ok(usuario);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al obtener los usuarios por nombre.");
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocurrió un error al procesar la solicitud.");
-            }
+            return Ok(usuario);
         }
 
 
@@ -53,23 +45,15 @@ namespace AppEmermedica.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            try
+            var usuarioEntity = new Usuario
             {
-                var usuarioEntity = new Usuario
-                {
-                    Nombre = request.Nombre,
-                    Rol = request.Rol
-                };
+                Nombre = request.Nombre,
+                Rol = request.Rol
+            };
 
-                var createdUsuario = await _mediator.Send(new CreateUsuarioCommand(usuarioEntity));
-                _logger.LogInformation("Usuario creado exitosamente: {Nombre}", createdUsuario.Nombre);
-                return CreatedAtAction(nameof(GetUsuariosByName), new { nombre = createdUsuario.Nombre }, createdUsuario);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al crear el usuario.");
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocurrió un error al procesar la solicitud.");
-            }
+            var createdUsuario = await _mediator.Send(new CreateUsuarioCommand(usuarioEntity));
+            _logger.LogInformation("Usuario creado exitosamente: {Nombre}", createdUsuario.Nombre);
+            return CreatedAtAction(nameof(GetUsuariosByName), new { nombre = createdUsuario.Nombre }, createdUsuario);
         }
     }
 }
