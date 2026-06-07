@@ -6,6 +6,7 @@ namespace AppEmermedica.Application.Usuarios.Requests
     {
         [Required]
         [StringLength(50, ErrorMessage = "El nombre no puede tener más de 50 caracteres.")]
+        [RegularExpression(@"^[\p{L}\p{M}\d\s]+$", ErrorMessage = "El nombre solo puede contener letras, números y espacios.")]
         public string Nombre { get; set; }
 
         [Required]
