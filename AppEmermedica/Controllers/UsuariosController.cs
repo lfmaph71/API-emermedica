@@ -52,7 +52,6 @@ namespace AppEmermedica.Controllers
             };
 
             var createdUsuario = await _mediator.Send(new CreateUsuarioCommand(usuarioEntity));
-            _logger.LogInformation("Usuario creado exitosamente: {Nombre}", createdUsuario.Nombre);
             return CreatedAtAction(nameof(GetUsuariosByName), new { nombre = createdUsuario.Nombre }, createdUsuario);
         }
     }
