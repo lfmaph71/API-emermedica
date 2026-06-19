@@ -5,9 +5,11 @@ using AppEmermedica.Application.Usuarios.Queries;
 using AppEmermedica.Application.Usuarios.Requests;
 using AppEmermedica.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Linq;
 using Xunit;
 
 namespace AppEmermedica.Tests.Controllers
@@ -105,6 +107,32 @@ namespace AppEmermedica.Tests.Controllers
             Assert.Equal(nameof(UsuariosController.GetUsuariosByName), createdResult.ActionName);
             Assert.Equal("maria", createdResult.RouteValues!["nombre"]);
             Assert.Equal(created, createdResult.Value);
+        }
+
+        [Fact]
+        public void GetUsuariosByName_HasAuthorizeAttributeWithAdminUserRoles()
+        {
+            var method = typeof(UsuariosController).GetMethod(nameof(UsuariosController.GetUsuariosByName));
+            var attribute = method?
+                .GetCustomAttributes(typeof(AuthorizeAttribute), false)
+                .OfType<AuthorizeAttribute>()
+                .SingleOrDefault();
+
+            Assert.NotNull(attribute);
+            Assert.Equal("Admin,User", attribute?.Roles);
+        }
+
+        [Fact]
+        public void Create_HasAuthorizeAttributeWithAdminRole()
+        {
+            var method = typeof(UsuariosController).GetMethod(nameof(UsuariosController.Create));
+            var attribute = method?
+                .GetCustomAttributes(typeof(AuthorizeAttribute), false)
+                .OfType<AuthorizeAttribute>()
+                .SingleOrDefault();
+
+            Assert.NotNull(attribute);
+            Assert.Equal("Admin", attribute?.Roles);
         }
     }
 }
